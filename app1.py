@@ -15,6 +15,8 @@ from telegram.ext import (
 )
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from pytz import timezone
+import dotenv
+import json
 
 
 # Logging
@@ -23,10 +25,11 @@ logger = logging.getLogger(__name__)
 
 # Google Sheets
 SCOPE = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
-SPREADSHEET_ID = "18x2y04G88tWFuxSqiL1h_gzBnqdUXj5JJFjr_5eGFYM"
-CREDENTIALS_FILE = "CRE.json"
+SPREADSHEET_ID = os.getenv("SPREADSHEET_ID")
+BOT_TOKEN = os.getenv("BOT_TOKEN")
 
-CREDS = ServiceAccountCredentials.from_json_keyfile_name(CREDENTIALS_FILE, SCOPE)
+credentials_json = os.getenv("GOOGLE_CREDENTIALS")
+CREDS = ServiceAccountCredentials.from_json_keyfile_dict(json.loads(credentials_json), SCOPE)
 CLIENT = gspread.authorize(CREDS)
 SHEET_USERS = CLIENT.open_by_key(SPREADSHEET_ID).worksheet("Users")
 SHEET_EXPENSES = CLIENT.open_by_key(SPREADSHEET_ID).worksheet("Expenses")
